@@ -1,0 +1,15 @@
+{
+  "name": "webex-webhook-bridge",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Dmytro Babeshko",
+  "dependencies": {
+    "chalk": "^4.1.0",
+    "webex": "^1.103.4"
+  }
+}
