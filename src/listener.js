@@ -59,11 +59,11 @@ function _startListener(resource, event) {
                 }
 
                 webex[resource_name].on(event_name, event_object => _forwardEvent(event_object));
-                console.log(fonts.info('Registered handler to forward  ' + fonts.highlight(`${resource_name}:${event_name}`) + ' events'));
+                console.log(fonts.info('Registered handler to forward ' + fonts.highlight(`${resource_name}:${event_name}`) + ' events'));
             }
         } else {
             webex[resource_name].on(event, event_object => _forwardEvent(event_object));
-            console.log(fonts.info('Registered handler to forward  ') + fonts.highlight(`${resource_name}:${event}`) + ' events');
+            console.log(fonts.info('Registered handler to forward ') + fonts.highlight(`${resource_name}:${event}`) + ' events');
         }
     }).catch(reason => {
         console.log(fonts.error(reason));
@@ -98,7 +98,7 @@ function _forwardEvent(event_object) {
     console.log(fonts.info(fonts.highlight(`${event_object.resource}:${event_object.event}`) + ' received'));
 
     const options = {
-        hostname: 'localhost',
+        hostname: specifications.host,
         port: specifications.port,
         method: 'POST',
         headers: {
@@ -118,7 +118,7 @@ function _forwardEvent(event_object) {
     req.write(event);
     req.end();
 
-    console.log(fonts.info(`event forwarded to localhost:${specifications.port}`));
+    console.log(fonts.info('event forwarded to ' + fonts.highlight(`${specifications.host}:${specifications.port}`)));
     console.log(fonts.info(event));
 }
 

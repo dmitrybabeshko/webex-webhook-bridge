@@ -1,8 +1,8 @@
 {
   "name": "webex-webhook-bridge",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "webex-webhook-bridge",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

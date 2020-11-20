@@ -6,6 +6,7 @@ const {fonts} = require('./src/fonts');
 function main() {
     let specs = {
         access_token: process.env.WEBEX_HOOK_TOKEN,
+        host: process.env.WEBEX_HOOK_HOST,
         port: parseInt(process.env.WEBEX_HOOK_PORT),
         selection: {
             resource: '',
@@ -14,9 +15,10 @@ function main() {
     };
 
     console.log(fonts.info('WEBEX_HOOK_TOKEN: ' + fonts.highlight(specs.access_token)));
+    console.log(fonts.info('WEBEX_HOOK_HOST: ' + fonts.highlight(specs.host)));
     console.log(fonts.info('WEBEX_HOOK_PORT: ' + fonts.highlight(specs.port)));
 
-    if ((specs.port) && (specs.access_token)) {
+    if ((specs.host) && (specs.port) && (specs.access_token)) {
         listener.verifyAccessToken(specs.access_token).then((person) => {
             console.log(fonts.info(`Token authenticated as ${fonts.highlight(person.displayName)}`));
             specs.selection.event = 'all';
