@@ -1,10 +1,13 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="app.js" type="NodeJSConfigurationType" nameIsGenerated="true" node-parameters="--unhandled-rejections=none" path-to-js-file="app.js" working-dir="$PROJECT_DIR$">
-    <envs>
-      <env name="WEBEX_HOOK_TOKEN" value="" />
-      <env name="WEBEX_HOOK_HOST" value="" />
-      <env name="WEBEX_HOOK_PORT" value="" />
-    </envs>
-    <method v="2" />
-  </configuration>
+    <configuration default="false" name="app.js" type="NodeJSConfigurationType" nameIsGenerated="true" node-parameters="--unhandled-rejections=none" path-to-js-file="app.js" working-dir="$PROJECT_DIR$">
+        <envs>
+            <env name="WEBEX_TOKEN" value="" />
+            <env name="WEBEX_WEBHOOK_HOST" value="" />
+            <env name="WEBEX_WEBHOOK_PORT" value="" />
+            <env name="WEBEX_KAFKA_TOPIC" value="" />
+            <env name="WEBEX_KAFKA_CLIENT" value="" />
+            <env name="WEBEX_KAFKA_BROKERS" value="" />
+        </envs>
+        <method v="2" />
+    </configuration>
 </component>

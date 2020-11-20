@@ -1,11 +1,13 @@
 const Webex = require('webex');
-
+const {Kafka} = require('kafkajs')
 const http = require('http');
 const {fonts} = require('./fonts');
 
+
 let webex;
+let kafka;
+let kafkaProducer;
 let runningListeners = 0;
-let specifications = {};
 
 
 function verifyAccessToken(accessToken) {
@@ -22,12 +24,15 @@ function verifyAccessToken(accessToken) {
     });
 }
 
-function runListener(specs, resource) {
-    specifications = specs;
-    const event = specs.selection.event;
+function runListener(config, resource) {
+    const event = config.selection.event;
     const resource_object = resource;
 
-    _startListener(resource, event);
+    if (config.kafka.enabled) {
+        _initializeKafka(config);
+    }
+
+    _startListener(config, resource, event);
     process.on('SIGINT', () => {
         _stopListener(resource_object, event);
 
@@ -45,7 +50,15 @@ function _initializeWebex(accessToken) {
     });
 }
 
-function _startListener(resource, event) {
+function _initializeKafka(config) {
+    kafka = new Kafka({
+        clientId: config.kafka.clientId,
+        brokers: config.kafka.brokers
+    })
+    kafkaProducer = kafka.producer();
+}
+
+function _startListener(config, resource, event) {
     const resource_name = resource.description;
     runningListeners++;
 
@@ -58,11 +71,11 @@ function _startListener(resource, event) {
                     continue;
                 }
 
-                webex[resource_name].on(event_name, event_object => _forwardEvent(event_object));
+                webex[resource_name].on(event_name, event_object => _forwardEvent(config, event_object));
                 console.log(fonts.info('Registered handler to forward ' + fonts.highlight(`${resource_name}:${event_name}`) + ' events'));
             }
         } else {
-            webex[resource_name].on(event, event_object => _forwardEvent(event_object));
+            webex[resource_name].on(event, event_object => _forwardEvent(config, event_object));
             console.log(fonts.info('Registered handler to forward ') + fonts.highlight(`${resource_name}:${event}`) + ' events');
         }
     }).catch(reason => {
@@ -92,14 +105,23 @@ function _stopListener(resource, event) {
     }
 }
 
-function _forwardEvent(event_object) {
+function _forwardEvent(config, event_object) {
     let event = JSON.stringify(event_object);
+    console.log(fonts.info(`${event_object.resource}:${event_object.event} ${fonts.highlight(event_object.data.personEmail)}`));
 
-    console.log(fonts.info(fonts.highlight(`${event_object.resource}:${event_object.event}`) + ' received'));
+    if (config.webhook.enabled) {
+        _webhhokForwardEvent(config, event);
+    }
 
+    if (config.kafka.enabled) {
+        _kafkaForwardEvent(config, event);
+    }
+}
+
+function _webhhokForwardEvent(config, event) {
     const options = {
-        hostname: specifications.host,
-        port: specifications.port,
+        hostname: config.webhook.host,
+        port: config.webhook.port,
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -118,8 +140,23 @@ function _forwardEvent(event_object) {
     req.write(event);
     req.end();
 
-    console.log(fonts.info('event forwarded to ' + fonts.highlight(`${specifications.host}:${specifications.port}`)));
-    console.log(fonts.info(event));
+    console.log(fonts.info('event forwarded to ' + fonts.highlight(`${config.webhook.host}:${config.webhook.port}`)));
+}
+
+function _kafkaForwardEvent(config, event) {
+    const run = async () => {
+        await kafkaProducer.connect()
+        await kafkaProducer.send({
+            topic: config.kafka.topic,
+            messages: [
+                {value: event},
+            ],
+        })
+    }
+
+    run().catch(function (e) {
+        console.log(fonts.error(e));
+    });
 }
 
 module.exports = {

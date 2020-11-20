@@ -10,6 +10,7 @@
   "author": "Dmytro Babeshko",
   "dependencies": {
     "chalk": "^4.1.0",
-    "webex": "^1.103.4"
+    "webex": "^1.103.6",
+    "kafkajs": "^1.14.0"
   }
 }
